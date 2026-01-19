@@ -23,7 +23,7 @@ import {
 // Make sure Footer.tsx exists in the same folder
 import Footer from './components/Footer'; 
 
-const API_URL = "https://sc-creative-share-market-class.vercel.app/api/clients";;
+const API_URL = "sc-class-backend.vercel.app/api/clients";;
 const ADMIN_EMAIL = "sdc101928@gmail.com";
 
 const App: React.FC = () => {
@@ -136,7 +136,7 @@ const App: React.FC = () => {
             {/* Hero Section */}
             <header className="bg-gradient-to-br from-[#1e3a8a] via-[#1e40af] to-[#2563eb] text-white py-20 px-6 text-center">
                 <div className="max-w-4xl mx-auto">
-                                <div class="border-2 border-yellow-500 inline-block px-4 py-1 rounded-full mb-6 text-xs font-bold uppercase text-yellow-400 tracking-widest">SC - Creative Investment Company</div>
+                                <div className="border-2 border-yellow-500 inline-block px-4 py-1 rounded-full mb-6 text-xs font-bold uppercase text-yellow-400 tracking-widest">SC - Creative Investment Company</div>
 
 <h2 className="text-4xl md:text-6xl font-black mb-6 uppercase leading-tight drop-shadow-md">
   एकदा शिका ! <br /> 

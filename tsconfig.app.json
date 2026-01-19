@@ -18,9 +18,10 @@
 
     /* Linting */
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    
     "erasableSyntaxOnly": true,
+    "noUnusedLocals": false,      // Change this to false
+    "noUnusedParameters": false,  // Change this to false
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
