@@ -6,10 +6,17 @@ import {
   MapPin, 
   Phone, 
   Mail, 
-  Menu 
+  Menu,
+  Share2 // Added Share2 for the universal share icon
 } from 'lucide-react';
 
 const Footer: React.FC = () => {
+  // This function creates the sharing message
+  const shareMessage = encodeURIComponent(
+    "Check out SC - Creative Group of Companies for Share Market classes and Investment plans: " + 
+    window.location.href
+  );
+
   return (
     <>
       <footer className="bg-[#0f172a] text-white py-12 px-6 md:px-16 font-['Hind']">
@@ -28,15 +35,9 @@ const Footer: React.FC = () => {
             
             {/* Social Icons */}
             <div className="flex gap-4">
-              {/* <a href="#" className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition">
-                <Facebook size={20} />
-              </a> */}
               <a href="https://wa.me/917219374836" className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition">
                 <MessageCircle size={20} />
               </a>
-              {/* <a href="#" className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition">
-                <Instagram size={20} />
-              </a> */}
             </div>
           </div>
 
@@ -80,15 +81,24 @@ const Footer: React.FC = () => {
         </div>
       </footer>
 
-      {/* Floating WhatsApp Button */}
-      <a 
-        href="https://wa.me/917219374836" 
-        target="_blank" 
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 bg-[#25d366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform z-[100] flex items-center justify-center"
-      >
-        <MessageCircle size={32} fill="currentColor" />
-      </a>
+      {/* Floating Universal WhatsApp Share Button */}
+      {/* Note: Removing the 'phone' parameter from the URL forces WhatsApp to open the contact picker */}
+     
+      {/* Floating Universal WhatsApp Share Button */}
+      <a
+  href={`https://wa.me/?text=${encodeURIComponent(
+    "📈 SC - Creative Group of Companies\n\n" +
+    "Share Market Classes & Investment Plans\n\n" +
+    "👉 Visit Now: https://sc-class-frontend.vercel.app/"
+  )}`}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="fixed bottom-6 right-6 bg-[#25d366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform z-[100] flex items-center justify-center"
+  title="Share on WhatsApp"
+>
+  <Share2 size={32} />
+</a>
+
     </>
   );
 };

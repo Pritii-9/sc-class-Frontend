@@ -23,7 +23,7 @@ import {
 // Make sure Footer.tsx exists in the same folder
 import Footer from './components/Footer'; 
 
-const API_URL = "sc-class-backend.vercel.app/api/clients";;
+const API_URL = "https://sc-class-backend.vercel.app/api/clients";;
 const ADMIN_EMAIL = "sdc101928@gmail.com";
 
 const App: React.FC = () => {
@@ -167,7 +167,7 @@ const App: React.FC = () => {
                     
                     <div className="grid md:grid-cols-2 gap-12">
                         <div className="space-y-6">
-                            <h4 className="font-black text-slate-800 text-lg uppercase tracking-widest">क्लासची वैशिष्ट्ये</h4>
+                            <h4 className="font-black text-slate-800 text-lg uppercase tracking-widest">क्लासची वैशिष्ट्ये :</h4>
                             {[
                                 { t: "Basic To Advance ",  d: "शेअर मार्केटचे पूर्ण ज्ञान एकाच ठिकाणी." },
                                 { t: "Technical & 100% Practical ",  d: "फक्त थिअरी नाही, प्रॅक्टिकल ट्रेनिंगवर भर." },
