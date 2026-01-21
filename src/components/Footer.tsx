@@ -1,104 +1,104 @@
 import React from 'react';
-import { 
-  Facebook, 
-  Instagram, 
-  MessageCircle, 
-  MapPin, 
-  Phone, 
-  Mail, 
-  Menu,
-  Share2 // Added Share2 for the universal share icon
+import {
+  MessageCircle,
+  MapPin,
+  Phone,
+  Mail,
+  Share2
 } from 'lucide-react';
 
 const Footer: React.FC = () => {
-  // This function creates the sharing message
-  const shareMessage = encodeURIComponent(
-    "Check out SC - Creative Group of Companies for Share Market classes and Investment plans: " + 
-    window.location.href
-  );
+
+  const SHARE_URL = "https://sc-class-frontend.vercel.app/";
+  const SHARE_TEXT =
+    "📈 SC - Creative Group of Companies\n\n" +
+    "Share Market Classes & Investment Plans\n\n" +
+    "👉 Visit Now:";
+
+  const handleShare = async () => {
+    // ✅ 1. Native mobile share (BEST)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "SC - Creative Group of Companies",
+          text: SHARE_TEXT,
+          url: SHARE_URL,
+        });
+        return;
+      } catch (err) {
+        console.log("Share cancelled");
+      }
+    }
+
+    // ✅ 2. WhatsApp fallback
+    const whatsappUrl =
+      "https://wa.me/?text=" +
+      encodeURIComponent(`${SHARE_TEXT}\n${SHARE_URL}`);
+
+    // open immediately on click (gesture-safe)
+    window.location.href = whatsappUrl;
+  };
 
   return (
     <>
       <footer className="bg-[#0f172a] text-white py-12 px-6 md:px-16 font-['Hind']">
         <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
-          
-          {/* Brand Section */}
+
+          {/* Brand */}
           <div className="space-y-6">
-            <div>
-              <h2 className="text-[#facc15] text-3xl font-black uppercase tracking-tight">
-                SC - Creative Group Of Company's
-              </h2>
-              <p className="text-slate-400 text-sm mt-2 font-semibold">
-                शेअर मार्केट क्लास आणि इन्व्हेस्टमेंट प्लॅनसाठी विश्वसनीय नाव.
-              </p>
-            </div>
-            
-            {/* Social Icons */}
-            <div className="flex gap-4">
-              <a href="https://wa.me/917219374836" className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition">
-                <MessageCircle size={20} />
-              </a>
-            </div>
+            <h2 className="text-[#facc15] text-3xl font-black uppercase">
+              SC - Creative Group Of Company's
+            </h2>
+            <p className="text-slate-400 text-sm font-semibold">
+              शेअर मार्केट क्लास आणि इन्व्हेस्टमेंट प्लॅनसाठी विश्वसनीय नाव.
+            </p>
+
+            <a
+              href="https://wa.me/917219374836"
+              className="inline-flex bg-white/10 p-2 rounded-full hover:bg-white/20"
+            >
+              <MessageCircle size={20} />
+            </a>
           </div>
 
-          {/* Quick Links Section */}
-          <div className="space-y-6">
-            <h3 className="text-xl font-black uppercase tracking-widest border-l-4 border-[#facc15] pl-3">
+          {/* Links */}
+          <div>
+            <h3 className="text-xl font-black border-l-4 border-[#facc15] pl-3 mb-4">
               Quick Links
             </h3>
-            <ul className="space-y-4 text-slate-300 font-bold">
-              <li><a href="#" className="hover:text-white transition">Home</a></li>
-              <li><a href="#" className="hover:text-white transition">Courses</a></li>
-              <li><a href="#" className="hover:text-white transition">Investment Plans</a></li>
+            <ul className="space-y-3 text-slate-300 font-bold">
+              <li>Home</li>
+              <li>Courses</li>
+              <li>Investment Plans</li>
             </ul>
           </div>
 
-          {/* Contact Us Section */}
-          <div className="space-y-6">
-            <h3 className="text-xl font-black uppercase tracking-widest border-l-4 border-[#facc15] pl-3">
+          {/* Contact */}
+          <div>
+            <h3 className="text-xl font-black border-l-4 border-[#facc15] pl-3 mb-4">
               Contact Us
             </h3>
-            <ul className="space-y-4 text-slate-300">
-              <li className="flex items-center gap-3">
-                <MapPin className="text-slate-500" size={20} />
-                <span>Hadapsar, Pune</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Phone className="text-slate-500" size={20} />
-                <span>7219374836</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Mail className="text-slate-500" size={20} />
-                <span>sdc101928@gmail.com</span>
-              </li>
+            <ul className="space-y-3 text-slate-300">
+              <li className="flex gap-2"><MapPin size={18}/> Hadapsar, Pune</li>
+              <li className="flex gap-2"><Phone size={18}/> 7219374836</li>
+              <li className="flex gap-2"><Mail size={18}/> sdc101928@gmail.com</li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="container mx-auto mt-12 pt-8 border-t border-slate-800 text-center text-xs text-slate-500 uppercase tracking-[0.3em]">
-          &copy; 2026 SC-Creative Group of Companies
+        <div className="text-center text-xs text-slate-500 mt-10">
+          © 2026 SC-Creative Group of Companies
         </div>
       </footer>
 
-      {/* Floating Universal WhatsApp Share Button */}
-      {/* Note: Removing the 'phone' parameter from the URL forces WhatsApp to open the contact picker */}
-     
-      {/* Floating Universal WhatsApp Share Button */}
-      <a
-  href={`https://wa.me/?text=${encodeURIComponent(
-    "📈 SC - Creative Group of Companies\n\n" +
-    "Share Market Classes & Investment Plans\n\n" +
-    "👉 Visit Now: https://sc-class-frontend.vercel.app/"
-  )}`}
-  target="_blank"
-  rel="noopener noreferrer"
-  className="fixed bottom-6 right-6 bg-[#25d366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform z-[100] flex items-center justify-center"
-  title="Share on WhatsApp"
->
-  <Share2 size={32} />
-</a>
-
+      {/* ✅ FINAL SHARE BUTTON */}
+      <button
+        onClick={handleShare}
+        className="fixed bottom-6 right-6 bg-[#25d366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition z-[100]"
+        title="Share"
+      >
+        <Share2 size={30} />
+      </button>
     </>
   );
 };
