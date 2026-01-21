@@ -226,7 +226,7 @@ const App: React.FC = () => {
                 <section className="bg-white rounded-[2.5rem] p-8 md:p-16 shadow-2xl text-center">
                     <div className="mb-16">
                         <h3 className="text-[#1e3a8a] text-3xl md:text-5xl font-black mb-4 uppercase">SC-Creative Investment Smart Plan</h3>
-                        <p className="text-slate-800 italic text-xl">तुमच्या गुंतवणुकीवर बँकेच्या FD पेक्षा जास्त परतावा.</p>
+                        <p className="mt-12 text-slate-800 italic font-bold text-base md:text-lg text-center leading-relaxed max-w-3xl mx-auto px-4">तुमच्या गुंतवणुकीवर बँकेच्या FD पेक्षा जास्त परतावा.</p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
                         {[
@@ -236,13 +236,14 @@ const App: React.FC = () => {
                             { i: <Clock size={36} />, t: "कालावधी", s: "1 वर्ष ते 2 वर्षांसाठी गुंतवणूक लॉक-इन पिरेड.", c: "text-purple-600", bg: "bg-purple-50" }
                         ].map((card, idx) => (
                             <div key={idx} className="p-10 border-2 border-slate-50 rounded-[3rem] hover:shadow-xl transition-all hover:-translate-y-2">
-                                <div className={`${card.bg} ${card.c} w-20 h-20 rounded-[2rem] flex items-center justify-center mx-auto mb-8`}>{card.i}</div>
-                                <h5 className="text-2xl font-black mb-2">{card.t}</h5>
-                                <p className="text-slate-500 font-bold uppercase text-xs tracking-widest">{card.s}</p>
+                                <div className={`${card.bg} ${card.c} w-40 h-40 rounded-[2rem] flex items-center justify-center mx-auto mb-8`}>{card.i}</div>
+                                <h5 className="text-3xl font-black mb-2">{card.t}</h5>
+                                <p className="text-slate-500 font-bold uppercase text-lg tracking-widest">{card.s}</p>
                             </div>
                         ))}
                     </div>
                  <div className="max-w-5xl mx-auto">
+                 <h1 className="text-[#1e3a8a] text-3xl md:text-5xl font-black mb-4 uppercase">उपलब्ध गुंतवणूक स्लॉट्स ( Slots )</h1> <br />
     <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
         {['₹ 25,000', '₹ 50,000', '₹ 1,00,000', '₹ 2,00,000', '₹ 3,00,000', '₹ 5,00,000 (Max)'].map((slot, i) => (
             <div 
@@ -270,8 +271,11 @@ const App: React.FC = () => {
                     <h3 className="text-2xl md:text-3xl font-black mb-6 text-[#1e3a8a] uppercase">तुमची गुंतवणूक आजच सुरू करा</h3>
                     <p className="text-slate-600 font-bold text-lg mb-10 italic">खालील QR कोड स्कॅन करून तुमची रक्कम जमा करा.</p>
                     <div className="bg-slate-50 p-8 rounded-[3rem] border-2 border-dashed border-blue-200 inline-block shadow-inner">
-                        <img src="/image.png" alt="Payment QR" className="w-64 h-64 md:w-80 md:h-80 mx-auto rounded-2xl shadow-xl border-4 border-white" />
-                        <p className="text-slate-800 font-black text-xl mt-6">Sachin Chobe</p>
+<img 
+  src="/image.png" 
+  alt="Payment QR" 
+  className="w-64 h-64 md:w-80 md:h-80 mx-auto rounded-2xl shadow-xl border-4 border-white" 
+/>                        <p className="text-slate-800 font-black text-xl mt-6">Sachin Chobe</p>
                         <p className="text-slate-500 font-bold text-sm uppercase mt-1">Scan to pay with any UPI app</p>
                     </div>
                     <div className="mt-10 bg-blue-50 p-6 rounded-2xl border border-blue-100 max-w-2xl mx-auto">
