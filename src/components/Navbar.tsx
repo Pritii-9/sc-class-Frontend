@@ -6,16 +6,12 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ isAdmin, setIsAdmin }) => {
+
   const login = () => {
-    const email = prompt("Enter Admin Email:");
-    if (email === "pvjadhav2513@gmail.com") {
-      const pass = prompt("Enter Password:");
-      if (pass === "admin123") {
-        setIsAdmin(true);
-        sessionStorage.setItem('sc_admin', 'true');
-      } else { alert("Wrong Password!"); }
-    } else { alert("Access Denied!"); }
+    // Removed duplicate logic - handled by App.tsx
+    window.location.reload();
   };
+
 
   const logout = () => {
     setIsAdmin(false);

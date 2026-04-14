@@ -20,7 +20,8 @@ import {
   XCircle
 } from 'lucide-react';
 
-// Make sure Footer.tsx exists in the same folder
+import Modal from './components/ui/Modal';
+import { ToastContainer } from './components/ui/Toast';
 import Footer from './components/Footer'; 
 
 const API_URL = "https://sc-class-backend.vercel.app/api/clients";;
@@ -36,10 +37,28 @@ const App: React.FC = () => {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editForm, setEditForm] = useState<any>(null);
 
+    // Modal states
+    const [loginStep, setLoginStep] = useState<'email' | 'password' | null>(null);
+    const [loginEmail, setLoginEmail] = useState('');
+    const [showConfirmDelete, setShowConfirmDelete] = useState<string | null>(null);
+    const [isEditingRow, setIsEditingRow] = useState(false);
+
+    // Toast state
+    const [toasts, setToasts] = useState<Array<{ id: string; message: string; type: 'success' | 'error' | 'warning' }>>([]);
+
+    const addToast = (message: string, type: 'success' | 'error' | 'warning' = 'success') => {
+      const id = Math.random().toString(36).substr(2, 9);
+      setToasts(prev => [...prev, { id, message, type }]);
+    };
+
+    const removeToast = (id: string) => {
+      setToasts(prev => prev.filter(t => t.id !== id));
+    };
+
     // Load data on component mount
     useEffect(() => {
         fetchClients();
-    }, []);
+    }, []); 
 
     // --- Database Functions ---
     const fetchClients = async () => {
@@ -52,17 +71,20 @@ const App: React.FC = () => {
     };
 
     const handleAddClient = async () => {
-        if (!form.name || !form.amount) return alert("कृपया नाव आणि गुंतवणूक रक्कम भरा!");
+        if (!form.name || !form.amount) {
+          addToast("कृपया नाव आणि गुंतवणूक रक्कम भरा!", 'warning');
+          return;
+        }
         const finalProfit = (form.amount * form.roi) / 100;
         try {
             await axios.post(API_URL, { ...form, profit: finalProfit });
             setForm({ date: '', name: '', phone: '', amount: 0, roi: 0, profit: 0 });
             fetchClients();
-            alert("क्लायंट यशस्वीरित्या जोडला गेला!");
+            addToast("क्लायंट यशस्वीरित्या जोडला गेला!");
         } catch (err) {
-            alert("डेटा सेव्ह करताना त्रुटी आली.");
+            addToast("डेटा सेव्ह करताना त्रुटी आली.", 'error');
         }
-    };
+    }; 
 
     const startEdit = (client: any) => {
         setEditingId(client._id);
@@ -70,34 +92,61 @@ const App: React.FC = () => {
     };
 
     const handleUpdate = async () => {
-        const finalProfit = (editForm.amount * editForm.roi) / 100;
+        const finalProfit = (editForm!.amount * editForm!.roi) / 100;
         try {
             await axios.put(`${API_URL}/${editingId}`, { ...editForm, profit: finalProfit });
             setEditingId(null);
+            setEditForm(null);
             fetchClients();
+            addToast("क्लायंट यशस्वीरित्या अपडेट झाला!");
         } catch (err) {
-            alert("अपडेट करताना त्रुटी आली.");
+            addToast("अपडेट करताना त्रुटी आली.", 'error');
         }
+    }; 
+
+    const requestDelete = (id: string) => {
+      setShowConfirmDelete(id);
     };
 
-    const deleteClient = async (id: string) => {
-        if (window.confirm("तुम्हाला खात्री आहे की तुम्हाला हा डेटा डिलीट करायचा आहे?")) {
-            await axios.delete(`${API_URL}/${id}`);
-            fetchClients();
+    const confirmDelete = async () => {
+      if (showConfirmDelete) {
+        try {
+          await axios.delete(`${API_URL}/${showConfirmDelete}`);
+          fetchClients();
+          addToast("Client deleted successfully!", 'success');
+        } catch (err) {
+          addToast("Delete failed.", 'error');
         }
-    };
+        setShowConfirmDelete(null);
+      }
+    }; 
 
     // --- Admin Auth ---
     const adminLogin = () => {
-        const email = prompt("तुमचा ईमेल टाका:");
-        if (email === ADMIN_EMAIL) {
-            const pass = prompt("पासवर्ड टाका:");
-            if (pass === "admin123") {
-                setIsAdmin(true);
-                sessionStorage.setItem('sc_admin', 'true');
-            } else { alert("चुकीचा पासवर्ड!"); }
-        } else { alert("तुम्हाला परवानगी नाही!"); }
+      setLoginStep('email');
+      setLoginEmail('');
     };
+
+    const handleEmailSubmit = () => {
+      if (loginEmail === ADMIN_EMAIL) {
+        setLoginStep('password');
+      } else {
+        addToast("तुम्हाला परवानगी नाही!", 'error');
+        setLoginStep(null);
+      }
+    };
+
+    const handlePasswordSubmit = (password: string) => {
+      if (password === "admin123") {
+        setIsAdmin(true);
+        sessionStorage.setItem('sc_admin', 'true');
+        addToast("Admin login successful!", 'success');
+        setLoginStep(null);
+        window.location.reload();
+      } else {
+        addToast("चुकीचा पासवर्ड!", 'error');
+      }
+    }; 
 
     const adminLogout = () => {
         sessionStorage.removeItem('sc_admin');
@@ -383,12 +432,81 @@ const App: React.FC = () => {
                             <td className="p-6 text-green-600 font-black">₹{c.profit.toLocaleString()}</td>
                             <td className="p-6">
                                 <div className="flex justify-center gap-4">
-                                    <button onClick={() => window.open(`https://wa.me/91${c.phone}`)} className="text-green-500 hover:scale-125 transition-transform">
+
+                                    <button 
+                                      onClick={() => window.open(`https://wa.me/91${c.phone}`)} 
+                                      className="text-green-500 hover:scale-125 transition-transform" 
+                                      aria-label="WhatsApp"
+                                      title="WhatsApp"
+                                    >
                                         <MessageCircle size={18} fill="currentColor" />
                                     </button>
-                                    <button onClick={() => deleteClient(c._id)} className="text-red-400 hover:scale-125 transition-transform">
+                                    {editingId === c._id ? (
+                                      <>
+                                        <input 
+                                          type="date" 
+                                          value={editForm?.date || ''} 
+                                          onChange={(e) => setEditForm({...editForm, date: e.target.value})}
+                                          className="w-20 p-1 rounded text-xs border border-blue-300 bg-blue-50"
+                                        />
+                                        <input 
+                                          type="text" 
+                                          value={editForm?.name || ''} 
+                                          onChange={(e) => setEditForm({...editForm, name: e.target.value})}
+                                          className="w-20 p-1 rounded text-xs border border-blue-300 bg-blue-50"
+                                        />
+                                        <input 
+                                          type="text" 
+                                          value={editForm?.phone || ''} 
+                                          onChange={(e) => setEditForm({...editForm, phone: e.target.value})}
+                                          className="w-20 p-1 rounded text-xs border border-blue-300 bg-blue-50"
+                                        />
+                                        <input 
+                                          type="number" 
+                                          value={editForm?.amount || ''} 
+                                          onChange={(e) => setEditForm({...editForm, amount: Number(e.target.value)})}
+                                          className="w-20 p-1 rounded text-xs border border-blue-300 bg-blue-50"
+                                        />
+                                        <input 
+                                          type="number" 
+                                          value={editForm?.roi || ''} 
+                                          onChange={(e) => setEditForm({...editForm, roi: Number(e.target.value)})}
+                                          className="w-16 p-1 rounded text-xs border border-blue-300 bg-blue-50"
+                                        />
+                                        <span className="text-green-600 text-xs font-bold">₹{editForm?.profit?.toLocaleString()}</span>
+                                        <div className="gap-1 flex">
+                                          <button onClick={handleUpdate} className="bg-green-500 hover:bg-green-600 text-white p-1 rounded text-sm shadow hover:shadow-md transition-all" aria-label="Save" title="Save">
+                                            SAVE
+                                          </button>
+                                          <button onClick={() => {setEditingId(null); setEditForm(null);}} className="bg-gray-500 hover:bg-gray-600 text-white p-1 rounded text-sm shadow hover:shadow-md transition-all" aria-label="Cancel" title="Cancel">
+                                            CANCEL
+                                          </button>
+                                        </div>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <td className="p-6 font-bold">₹{c.amount.toLocaleString()}</td>
+                                        <td className="p-6 text-orange-600 font-bold">{c.roi}%</td>
+                                        <td className="p-6 text-green-600 font-black">₹{c.profit.toLocaleString()}</td>
+                                        <button 
+                                          onClick={() => startEdit(c)} 
+                                          className="text-blue-400 hover:scale-125 transition-transform"
+                                          aria-label="Edit"
+                                          title="Edit"
+                                        >
+                                            <Edit3 size={18} />
+                                        </button>
+                                      </>
+                                    )}
+                                    <button 
+                                      onClick={() => requestDelete(c._id)} 
+                                      className="text-red-400 hover:scale-125 transition-transform"
+                                      aria-label="Delete"
+                                      title="Delete"
+                                    >
                                         <Trash2 size={18} />
                                     </button>
+
                                 </div>
                             </td>
                         </tr>
@@ -399,6 +517,64 @@ const App: React.FC = () => {
     </section>
 )}
             </main>
+
+            <ToastContainer toasts={toasts} onRemove={removeToast} />
+            
+            {/* Login Modal */}
+            <Modal
+              isOpen={loginStep !== null}
+              onClose={() => setLoginStep(null)}
+              title={loginStep === 'email' ? 'Admin Login - Email' : 'Admin Login - Password'}
+            >
+              {loginStep === 'email' ? (
+                <div className="space-y-4">
+                  <input
+                    type="email"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    placeholder="Admin Email"
+                    className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 ring-blue-500 outline-none"
+                  />
+                  <button onClick={handleEmailSubmit} className="w-full bg-[#1e3a8a] text-white p-3 rounded-xl font-bold">
+                    Next
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+  <input
+                    type="password"
+                    id="admin-password"
+                    placeholder="Password"
+                    className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 ring-blue-500 outline-none"
+                    onKeyDown={(e) => {
+                      const target = e.target as HTMLInputElement;
+                      if (e.key === 'Enter') handlePasswordSubmit(target.value);
+                    }}
+                  />
+  <button 
+                    onClick={() => {
+                      const passInput = document.getElementById('admin-password') as HTMLInputElement;
+                      handlePasswordSubmit(passInput.value);
+                    }}
+                    className="w-full bg-[#1e3a8a] text-white p-3 rounded-xl font-bold"
+                  >
+                    Login
+                  </button>
+                </div>
+              )}
+            </Modal>
+
+            {/* Confirm Delete Modal */}
+            <Modal
+              isOpen={showConfirmDelete !== null}
+              onClose={() => setShowConfirmDelete(null)}
+              title="Confirm Delete"
+              showCancel
+              confirmText="Delete"
+              onConfirm={confirmDelete}
+            >
+              <p className="text-lg">तुम्हाला खात्री आहे की तुम्हाला हा डेटा डिलीट करायचा आहे?</p>
+            </Modal>
 
             <Footer />
         </div>
