@@ -15,35 +15,28 @@ import {
   Trash2,
   Edit3,
   LogOut,
-  UserCheck,
-  Save,
-  XCircle
+  UserCheck
 } from 'lucide-react';
 
 import Modal from './components/ui/Modal';
 import { ToastContainer } from './components/ui/Toast';
 import Footer from './components/Footer'; 
 
-const API_URL = "https://sc-class-backend.vercel.app/api/clients";;
+const API_URL = "https://sc-class-backend.vercel.app/api/clients";
 const ADMIN_EMAIL = "sdc101928@gmail.com";
 
 const App: React.FC = () => {
-    // --- State Management ---
     const [isAdmin, setIsAdmin] = useState<boolean>(sessionStorage.getItem('sc_admin') === 'true');
     const [clients, setClients] = useState<any[]>([]);
     const [form, setForm] = useState({ date: '', name: '', phone: '', amount: 0, roi: 0, profit: 0 });
     
-    // Editing State
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editForm, setEditForm] = useState<any>(null);
 
-    // Modal states
     const [loginStep, setLoginStep] = useState<'email' | 'password' | null>(null);
     const [loginEmail, setLoginEmail] = useState('');
     const [showConfirmDelete, setShowConfirmDelete] = useState<string | null>(null);
-    const [isEditingRow, setIsEditingRow] = useState(false);
 
-    // Toast state
     const [toasts, setToasts] = useState<Array<{ id: string; message: string; type: 'success' | 'error' | 'warning' }>>([]);
 
     const addToast = (message: string, type: 'success' | 'error' | 'warning' = 'success') => {
@@ -55,12 +48,10 @@ const App: React.FC = () => {
       setToasts(prev => prev.filter(t => t.id !== id));
     };
 
-    // Load data on component mount
     useEffect(() => {
         fetchClients();
     }, []); 
 
-    // --- Database Functions ---
     const fetchClients = async () => {
         try {
             const res = await axios.get(API_URL);
@@ -80,7 +71,7 @@ const App: React.FC = () => {
             await axios.post(API_URL, { ...form, profit: finalProfit });
             setForm({ date: '', name: '', phone: '', amount: 0, roi: 0, profit: 0 });
             fetchClients();
-            addToast("क्लायंट यशस्वीरित्या जोडला गेला!");
+            addToast("क्लायंट यशस्वीरित्या जोडला गेला!", 'success');
         } catch (err) {
             addToast("डेटा सेव्ह करताना त्रुटी आली.", 'error');
         }
@@ -98,9 +89,9 @@ const App: React.FC = () => {
             setEditingId(null);
             setEditForm(null);
             fetchClients();
-            addToast("क्लायंट यशस्वीरित्या अपडेट झाला!");
+            addToast("क्लायंट अपडेट झाला!", 'success');
         } catch (err) {
-            addToast("अपडेट करताना त्रुटी आली.", 'error');
+            addToast("अपडेट त्रुटी.", 'error');
         }
     }; 
 
@@ -113,7 +104,7 @@ const App: React.FC = () => {
         try {
           await axios.delete(`${API_URL}/${showConfirmDelete}`);
           fetchClients();
-          addToast("Client deleted successfully!", 'success');
+          addToast("Client deleted!", 'success');
         } catch (err) {
           addToast("Delete failed.", 'error');
         }
@@ -121,7 +112,6 @@ const App: React.FC = () => {
       }
     }; 
 
-    // --- Admin Auth ---
     const adminLogin = () => {
       setLoginStep('email');
       setLoginEmail('');
@@ -131,7 +121,7 @@ const App: React.FC = () => {
       if (loginEmail === ADMIN_EMAIL) {
         setLoginStep('password');
       } else {
-        addToast("तुम्हाला परवानगी नाही!", 'error');
+        addToast("Invalid email!", 'error');
         setLoginStep(null);
       }
     };
@@ -144,7 +134,7 @@ const App: React.FC = () => {
         setLoginStep(null);
         window.location.reload();
       } else {
-        addToast("चुकीचा पासवर्ड!", 'error');
+        addToast("Wrong password!", 'error');
       }
     }; 
 
@@ -155,426 +145,258 @@ const App: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#f8fafc] font-['Hind'] text-slate-800">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 font-['Hind'] text-slate-800">
             {/* Navbar */}
-            <nav className="bg-[#1e3a8a] text-white p-4 sticky top-0 z-50 shadow-lg">
+            <nav className="bg-gradient-to-r from-blue-900 to-blue-800 text-white p-4 sticky top-0 z-50 shadow-2xl">
                 <div className="container mx-auto flex justify-between items-center">
                     <div className="flex items-center gap-3">
-                        <div className="bg-white p-2 rounded-lg">
-                            <TrendingUp className="text-[#1e3a8a] w-6 h-6" />
+                        <div className="bg-white/20 backdrop-blur-sm p-2 rounded-xl">
+                            <TrendingUp className="w-7 h-7" />
                         </div>
                         <div>
-                            <h1 className="font-bold leading-tight uppercase text-lg tracking-wider">SC - Creative Group</h1>
-                            <p className="text-[20px] opacity-80 uppercase font-semibold text-yellow-400">of Company's</p>
+                            <h1 className="font-black text-xl uppercase tracking-wider">SC Creative Group</h1>
+                            <p className="text-yellow-300 text-lg font-bold uppercase opacity-90">Investment Company</p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3">
                         {!isAdmin ? (
-                            <button onClick={adminLogin} className="flex items-center gap-2 text-xs bg-white/10 px-4 py-2 rounded-full hover:bg-white/20 transition-all border border-white/20">
-                                <UserCheck size={14} /> Admin Login
+                            <button onClick={adminLogin} className="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-6 py-2 rounded-2xl font-bold transition-all border border-white/30 text-sm">
+                                <UserCheck size={16} className="inline mr-2" /> Admin
                             </button>
                         ) : (
-                            <button onClick={adminLogout} className="flex items-center gap-2 text-xs bg-red-500 px-4 py-2 rounded-full hover:bg-red-600 transition-all shadow-md">
-                                <LogOut size={14} /> Logout
+                            <button onClick={adminLogout} className="bg-red-500/90 hover:bg-red-600 px-6 py-2 rounded-2xl font-bold transition-all shadow-lg text-sm">
+                                <LogOut size={16} className="inline mr-2" /> Logout
                             </button>
                         )}
                     </div>
                 </div>
             </nav>
 
-            {/* Hero Section */}
-            <header className="bg-gradient-to-br from-[#1e3a8a] via-[#1e40af] to-[#2563eb] text-white py-20 px-6 text-center">
-                <div className="max-w-4xl mx-auto">
-                                <div className="border-2 border-yellow-500 inline-block px-4 py-1 rounded-full mb-6 text-xs font-bold uppercase text-yellow-400 tracking-widest">SC - Creative Investment Company</div>
-
-<h2 className="text-4xl md:text-6xl font-black mb-6 uppercase leading-tight drop-shadow-md">
-  एकदा शिका ! <br /> 
-  <span className="text-[#facc15]">आयुष्यभर कमवा !</span>
-</h2>
-                    <p className="text-xl md:text-2xl opacity-90 font-medium italic mb-10">तुमची आर्थिक प्रगती आमचे ध्येय.</p>
-                    <div className="flex flex-col md:flex-row gap-4 justify-center">
-                        <a href="tel:7219374836" className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-xl transition-all hover:scale-105">
-                            <Phone size={20} fill="currentColor" /> कॉल करा: 7219374836
+            {/* Hero */}
+            <header className="bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 text-white py-24 px-6 text-center relative overflow-hidden">
+                <div className="max-w-5xl mx-auto relative z-10">
+                    <div className="inline-block bg-yellow-400/20 px-6 py-2 rounded-full mb-8 text-xs font-black uppercase tracking-widest border-2 border-yellow-400/50">
+                        SC Creative Investment Company
+                    </div>
+                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-black mb-8 uppercase leading-tight">
+                        एकदा शिका! <br />
+                        <span className="text-yellow-300 block text-5xl md:text-7xl">आयुष्यभर कमवा!</span>
+                    </h1>
+                    <p className="text-xl md:text-2xl opacity-90 font-medium italic mb-12 max-w-2xl mx-auto leading-relaxed">
+                        तुमची आर्थिक प्रगती आमचे ध्येय
+                    </p>
+                    <div className="flex flex-col lg:flex-row gap-4 justify-center items-center max-w-2xl mx-auto">
+                        <a href="tel:+917219374836" className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-3xl font-bold text-lg flex items-center gap-3 shadow-2xl hover:shadow-3xl transition-all w-full lg:w-auto">
+                            <Phone size={22} /> कॉल: 7219374836
                         </a>
-                        <a href="https://wa.me/917219374836" className="bg-white hover:bg-slate-50 text-slate-800 px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-xl transition-all hover:scale-105 border-b-4 border-slate-200">
-                            <MessageCircle className="text-green-500" size={20} fill="currentColor" /> WhatsApp करा
+                        <a href="https://wa.me/917219374836" className="bg-white hover:bg-slate-100 text-slate-900 px-8 py-4 rounded-3xl font-bold text-lg flex items-center gap-3 shadow-2xl hover:shadow-3xl transition-all w-full lg:w-auto border-4 border-slate-200">
+                            <MessageCircle size={22} className="text-emerald-500" /> WhatsApp
                         </a>
                     </div>
                 </div>
             </header>
 
-            <main className="container mx-auto px-4 -mt-12 pb-24 space-y-12">
-                
-                {/* SHARE MARKET CLASS SECTION */}
-                <section className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-2xl border border-white/50 relative overflow-hidden">
-                    <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-10">
-                        <h3 className="text-[#1e3a8a] text-2xl md:text-4xl font-black uppercase tracking-tight">SC-CREATIVE SHARE MARKET CLASS</h3>
-                        <span className="flex items-center gap-2 bg-red-50 text-red-700 text-lg font-bold px-5 py-2 rounded-full border border-green-200">
-                            <CheckCircle2 size={29} /> मार्च 2025 पासून सुरु - आता हडपसरमध्ये 
-                        </span>
+            <main className="container mx-auto px-4 -mt-16 pb-24 space-y-16">
+                {/* Investment Cards */}
+                <section className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 md:p-16 shadow-2xl border border-white/50">
+                    <h2 className="text-3xl md:text-5xl font-black mb-8 text-center text-slate-800 uppercase tracking-tight">
+                        SC Creative Investment Smart Plan
+                    </h2>
+                    <p className="text-xl md:text-2xl text-center mb-16 text-slate-600 font-medium max-w-3xl mx-auto leading-relaxed">
+                        बँकेच्या FD पेक्षा 2X जास्त परतावा • सुरक्षित • 9% वार्षिक व्याज
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="group p-10 border-2 border-slate-100 rounded-3xl hover:shadow-2xl transition-all hover:-translate-y-2 bg-gradient-to-b from-blue-50 to-indigo-50">
+                            <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-xl">
+                                <Building2 size={28} />
+                            </div>
+                            <h3 className="text-2xl font-black mb-4 text-blue-900">9% Yearly ROI</h3>
+                            <p className="text-slate-600 font-semibold uppercase tracking-wide text-sm">खात्रीशीर परतावा • Yearly Interest Rate</p>
+                        </div>
+                        <div className="group p-10 border-2 border-slate-100 rounded-3xl hover:shadow-2xl transition-all hover:-translate-y-2 bg-gradient-to-b from-emerald-50 to-green-50">
+                            <div className="w-20 h-20 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-xl">
+                                <IndianRupee size={28} />
+                            </div>
+                            <h3 className="text-2xl font-black mb-4 text-emerald-900">₹25K - ₹5L Investment</h3>
+                            <p className="text-slate-600 font-semibold uppercase tracking-wide text-sm">Minimum ₹25,000 • Maximum ₹5 Lakh</p>
+                        </div>
+                        <div className="group p-10 border-2 border-slate-100 rounded-3xl hover:shadow-2xl transition-all hover:-translate-y-2 bg-gradient-to-b from-purple-50 to-violet-50">
+                            <div className="w-20 h-20 bg-gradient-to-r from-purple-500 to-violet-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-xl">
+                                <Clock size={28} />
+                            </div>
+                            <h3 className="text-2xl font-black mb-4 text-purple-900">1-2 Years Lock-in</h3>
+                            <p className="text-slate-600 font-semibold uppercase tracking-wide text-sm">Secure long-term investment period</p>
+                        </div>
                     </div>
-                    
-                    <div className="grid md:grid-cols-2 gap-12">
-                        <div className="space-y-6">
-                            <h4 className="font-black text-slate-800 text-lg uppercase tracking-widest">क्लासची वैशिष्ट्ये :</h4>
-                            {[
-                                { t: "Basic To Advance ",  d: "शेअर मार्केटचे पूर्ण ज्ञान एकाच ठिकाणी." },
-                                { t: "Technical & 100% Practical ",  d: "फक्त थिअरी नाही, प्रॅक्टिकल ट्रेनिंगवर भर." },
-                                { t: "No Computer Needed ",  d: "फक्त मोबाईल आणि इंटरनेट पुरेसे आहे." }
-                            ].map((item, idx) => (
-                                <div key={idx} className="flex gap-4 items-start">
-                                    <CheckCircle2 className="text-green-500 mt-1 flex-shrink-0" size={24} />
-                                    <p className="text-lg"><span className="font-black text-[#1e3a8a]">{item.t}:</span> {item.d}</p>
+                    <div className="mt-16 text-center">
+                        <h3 className="text-3xl md:text-4xl font-black mb-6 uppercase text-slate-800">Available Investment Slots</h3>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+                            {['₹25,000', '₹50,000', '₹1L', '₹2L', '₹3L', '₹5L (Max)'].map((slot, i) => (
+                                <div key={i} className={`p-6 rounded-2xl font-black text-lg border-4 shadow-lg text-center transition-all hover:scale-105 cursor-pointer group
+                                    ${i === 5 ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-emerald-400 shadow-emerald-300/50 group-hover:shadow-emerald-400/70' : 'bg-gradient-to-r from-blue-400 to-blue-500 text-white border-blue-400 shadow-blue-300/50 group-hover:shadow-blue-400/70'}`}>
+                                    {slot}
                                 </div>
                             ))}
                         </div>
-                        <div className="space-y-4">
-                            <div className="flex items-center gap-5 bg-blue-50 p-6 rounded-[2rem] border border-blue-100 transition-hover hover:bg-blue-100">
-                                <Calendar className="text-blue-600" size={32} />
-                                <p className="font-black text-xl text-blue-900">15 दिवसांची लाईव्ह प्रॅक्टिकल बॅच.</p>
+                    </div>
+                </section>
+
+                {/* ADMIN PANEL */}
+                {isAdmin && (
+                    <section className="bg-gradient-to-br from-slate-50 to-white/50 backdrop-blur-sm rounded-3xl p-8 md:p-16 shadow-2xl border border-slate-100/50">
+                        <div className="flex items-center gap-4 mb-12">
+                            <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-3 rounded-2xl shadow-lg">
+                                <ShieldCheck className="text-white w-8 h-8" />
                             </div>
-                            <div className="flex items-center gap-5 bg-green-50 p-6 rounded-[2rem] border border-green-100 transition-hover hover:bg-green-100">
-                                <IndianRupee className="text-green-600" size={32} />
-                                <p className="font-black text-xl text-green-900">महिना 15,000 किंवा त्यापेक्षा जास्त कमवा.</p>
+                            <h2 className="text-3xl font-black text-slate-800">Client Portfolio Dashboard</h2>
+                        </div>
+
+                        {/* Add Client Form */}
+                        <div className="border-4 border-dashed border-slate-200/50 rounded-3xl p-8 mb-12 bg-white/70 shadow-xl backdrop-blur-sm">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                                <input type="date" value={form.date} onChange={e => setForm({...form, date: e.target.value})} className="p-4 rounded-2xl border border-slate-200 focus:ring-2 ring-blue-500 outline-none shadow-sm transition-all text-sm" />
+                                <input type="text" placeholder="Client Name *" value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="p-4 rounded-2xl border border-slate-200 focus:ring-2 ring-blue-500 outline-none shadow-sm transition-all text-sm" />
+                                <input type="tel" placeholder="Phone" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} className="p-4 rounded-2xl border border-slate-200 focus:ring-2 ring-blue-500 outline-none shadow-sm transition-all text-sm" />
+                                <input type="number" placeholder="Investment ₹ *" value={form.amount} onChange={e => setForm({...form, amount: Number(e.target.value)})} className="p-4 rounded-2xl border-2 border-blue-300 bg-blue-50 text-blue-900 font-bold focus:ring-3 ring-blue-500 shadow-md transition-all text-lg" />
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <input type="number" placeholder="ROI % *" value={form.roi} onChange={e => setForm({...form, roi: Number(e.target.value)})} className="p-4 rounded-2xl border border-slate-200 focus:ring-2 ring-orange-500 outline-none shadow-sm transition-all text-lg font-bold" />
+                                <input type="text" readOnly placeholder="Profit (Auto)" value={form.amount && form.roi ? `₹${((form.amount * form.roi) / 100).toLocaleString('en-IN')}` : ''} className="p-4 rounded-2xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 text-green-800 font-bold shadow-md text-xl" />
+                                <button onClick={handleAddClient} className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-black rounded-2xl py-5 text-lg transition-all shadow-2xl hover:shadow-3xl hover:-translate-y-1 w-full uppercase tracking-wide">
+                                    ➕ Add New Client
+                                </button>
                             </div>
                         </div>
-                    </div>
-                </section>
 
-                {/* CUSTOMER INTENT SECTION */}
-                <section className="bg-white rounded-[2.5rem] p-10 md:p-16 shadow-2xl text-center">
-    <h3 className="text-2xl md:text-3xl font-black mb-12 italic text-slate-800">
-        तुम्ही कशाच्या शोधात आहात ?
-    </h3>
-    
-    <div className="space-y-6 mb-16 max-w-2xl mx-auto text-lg md:text-2xl font-bold text-slate-700">
-        {[
-            "तुम्ही पार्टटाईम इनकमच्या शोधात आहात का?",
-            "शेअर मार्केटची सुरूवात कशी करणार?",
-            "करिअर किंवा बिजनेस करू इच्छिता?"
-        ].map((q, i) => (
-            <div key={i} className="flex items-center gap-4 group justify-center md:justify-start">
-                {/* Custom Blue Bullet Point */}
-                <div className="h-3 w-3 rounded-full bg-[#1e3a8a] shadow-[0_0_10px_rgba(30,58,138,0.3)] group-hover:scale-125 transition-transform"></div>
-                <p className="group-hover:text-[#1e3a8a] transition-colors">{q}</p>
-            </div>
-        ))}
-    </div>
+                        {/* Mobile-First Responsive Table */}
+                        <div className="w-full overflow-x-auto rounded-3xl border-4 border-slate-100/50 shadow-2xl bg-white/80 backdrop-blur-sm">
+                            <table className="w-full text-left border-spacing-0 min-w-[800px]">
+                                <thead className="sticky top-0 bg-gradient-to-r from-slate-900 to-slate-800/90 backdrop-blur-md z-20">
+                                    <tr>
+                                        <th className="p-3 sm:p-6 hidden sm:table-cell text-xs font-black text-slate-200 text-center">#</th>
+                                        <th className="p-3 sm:p-6 text-xs sm:text-sm font-black text-slate-200 text-left">Date</th>
+                                        <th className="p-3 sm:p-6 text-xs sm:text-sm font-black text-slate-200 text-left">Name</th>
+                                        <th className="p-3 sm:p-6 text-xs sm:text-sm font-black text-slate-200 text-left">Contact</th>
+                                        <th className="p-3 sm:p-6 text-xs sm:text-sm font-black text-slate-200 text-right">Investment</th>
+                                        <th className="p-3 sm:p-6 text-xs sm:text-sm font-black text-slate-200 text-right">ROI</th>
+                                        <th className="p-3 sm:p-6 text-xs sm:text-sm font-black text-emerald-300 text-right">Profit</th>
+                                        <th className="p-3 sm:p-6 text-xs sm:text-sm font-black text-slate-200 text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100/50">
+                                    {clients.map((c, i) => (
+                                        <tr key={c._id} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all group border-b border-slate-100/50">
+                                            <td className="p-3 sm:p-6 hidden sm:table-cell text-slate-500 font-mono text-xs">{i + 1}</td>
+                                            <td className="p-3 sm:p-6 text-sm font-medium text-slate-700">{c.date || 'Recent'}</td>
+                                            <td className="p-3 sm:p-6 font-bold text-xl text-slate-900 group-hover:text-blue-900">{c.name}</td>
+                                            <td className="p-3 sm:p-6">
+                                                <a href={`tel:${c.phone}`} className="text-blue-600 hover:text-blue-700 font-mono text-sm underline block sm:inline sm:break-all">
+                                                    {c.phone}
+                                                </a>
+                                            </td>
+                                            <td className="p-3 sm:p-6 font-bold text-xl text-slate-900">₹{c.amount.toLocaleString('en-IN')}</td>
+                                            <td className="p-3 sm:p-6 text-orange-600 font-bold text-lg uppercase">{c.roi}%</td>
+                                            <td className="p-3 sm:p-6 font-black text-2xl text-emerald-600 bg-emerald-100/50 px-3 py-1 rounded-full inline-block shadow-lg">
+                                                ₹{c.profit.toLocaleString('en-IN')}
+                                            </td>
+                                            <td className="p-3 sm:p-6">
+                                                <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                                                    <a href={`https://wa.me/91${c.phone}`} className="bg-emerald-500 hover:bg-emerald-600 text-white p-3 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center w-12 h-12 sm:w-auto sm:px-4">
+                                                        <MessageCircle size={20} />
+                                                    </a>
+                                                    {editingId === c._id ? (
+                                                        <div className="flex flex-wrap gap-2 justify-center items-center p-2 bg-yellow-50 rounded-xl">
+                                                            <input type="date" value={editForm?.date || ''} onChange={(e) => setEditForm({...editForm, date: e.target.value})} className="p-2 rounded-lg border border-yellow-300 text-xs w-24" />
+                                                            <input type="number" value={editForm?.amount || ''} onChange={(e) => setEditForm({...editForm, amount: Number(e.target.value)})} className="p-2 rounded-lg border border-yellow-300 text-xs w-24 font-bold" />
+                                                            <button onClick={handleUpdate} className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm shadow font-bold transition-all">
+                                                                💾 Save
+                                                            </button>
+                                                            <button onClick={() => {setEditingId(null); setEditForm(null);}} className="bg-slate-500 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm shadow font-bold transition-all">
+                                                                ❌ Cancel
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                        <>
+                                                            <button onClick={() => startEdit(c)} className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center gap-1 w-12 h-12 sm:w-auto sm:px-4">
+                                                                <Edit3 size={18} />
+                                                            </button>
+                                                            <button onClick={() => requestDelete(c._id)} className="bg-red-500 hover:bg-red-600 text-white p-3 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center gap-1 w-12 h-12 sm:w-auto sm:px-4">
+                                                                <Trash2 size={18} />
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                )}
 
-    <div className="bg-[#fffdf0] border-4 border-dashed border-yellow-300 rounded-[3rem] p-8 md:p-14 max-w-5xl mx-auto shadow-inner">
-        <h4 className="text-2xl md:text-4xl font-black text-slate-800 leading-tight">
-            शेअर मार्केट क्लास शिकून, हमखास <span className="text-green-600 underline underline-offset-8 decoration-green-200">₹1000 प्रॉफिट</span> मिळवा (दररोज).
-        </h4>
-        <p className="text-slate-800 mt-6 font-bold uppercase tracking-widest text-lg">
-            वैयक्तिक लक्ष • लाईव्ह ट्रेनिंग
-        </p>
-    </div>
-</section>
+                <ToastContainer toasts={toasts} onRemove={removeToast} />
 
-                {/* SMART PLAN SECTION */}
-                <section className="bg-white rounded-[2.5rem] p-8 md:p-16 shadow-2xl text-center">
-                    <div className="mb-16">
-                        <h3 className="text-[#1e3a8a] text-3xl md:text-5xl font-black mb-4 uppercase">SC-Creative Investment Smart Plan</h3>
-                        <p className="mt-12 text-slate-800 italic font-bold text-base md:text-lg text-center leading-relaxed max-w-3xl mx-auto px-4">तुमच्या गुंतवणुकीवर बँकेच्या FD पेक्षा जास्त परतावा.</p>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-                        {[
-                            { i: <Building2 size={36} />, t: "9% वार्षिक परतावा", s: "तुमच्या गुंतवणूकीवर खात्रीशीर परतावा (YEARLY RATE OF INTEREST).", c: "text-blue-600", bg: "bg-blue-50" },
-                                                        { i: <HandCoins size={36} />, t: "गुंतवणूक मर्यादा", s: "₹25,000 ते ₹5,00,000 पर्यंत गुंतवणूक करण्याची संधी.", c: "text-green-600", bg: "bg-green-50" },
-
-                            { i: <Clock size={36} />, t: "कालावधी", s: "1 वर्ष ते 2 वर्षांसाठी गुंतवणूक लॉक-इन पिरेड.", c: "text-purple-600", bg: "bg-purple-50" }
-                        ].map((card, idx) => (
-                            <div key={idx} className="p-10 border-2 border-slate-50 rounded-[3rem] hover:shadow-xl transition-all hover:-translate-y-2">
-                                <div className={`${card.bg} ${card.c} w-40 h-40 rounded-[2rem] flex items-center justify-center mx-auto mb-8`}>{card.i}</div>
-                                <h5 className="text-3xl font-black mb-2">{card.t}</h5>
-                                <p className="text-slate-500 font-bold uppercase text-lg tracking-widest">{card.s}</p>
-                            </div>
-                        ))}
-                    </div>
-                 <div className="max-w-5xl mx-auto">
-                 <h1 className="text-[#1e3a8a] text-3xl md:text-5xl font-black mb-4 uppercase">उपलब्ध गुंतवणूक स्लॉट्स ( Slots )</h1> <br />
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-        {['₹ 25,000', '₹ 50,000', '₹ 1,00,000', '₹ 2,00,000', '₹ 3,00,000', '₹ 5,00,000 (Max)'].map((slot, i) => (
-            <div 
-                key={i} 
-                className={`p-6 rounded-[1.5rem] font-black text-lg border-2 transition-all hover:scale-105 shadow-sm text-center
-                ${slot.includes('5,00,000') 
-                    ? 'bg-green-600 border-green-700 text-white shadow-red-200' 
-                    : 'bg-blue-50 border-blue-100 text-blue-900 hover:bg-blue-100' 
-                }`}
-            >
-                {slot}
-            </div>
-        ))}
-    </div>
-
-    {/* Adjusted Quote Div */}
-   <div className="mt-12 text-slate-800 italic font-bold text-base md:text-lg text-center leading-relaxed max-w-3xl mx-auto px-4">
-        "गुंतवणूक म्हणजे स्वतःचे किंवा व्यवस्थापनाचे पैसे अधिक उत्पन्न मिळवण्याच्या उद्देशाने वापरणे."
-    </div>
-</div>
-
-                </section>
-
-                 <section className="bg-white rounded-[2.5rem] p-10 md:p-16 shadow-2xl text-center border border-slate-100">
-                    <h3 className="text-2xl md:text-3xl font-black mb-6 text-[#1e3a8a] uppercase">तुमची गुंतवणूक आजच सुरू करा</h3>
-                    <p className="text-slate-600 font-bold text-lg mb-10 italic">खालील QR कोड स्कॅन करून तुमची रक्कम जमा करा.</p>
-                    <div className="bg-slate-50 p-8 rounded-[3rem] border-2 border-dashed border-blue-200 inline-block shadow-inner">
-<img 
-  src="/image.png" 
-  alt="Payment QR" 
-  className="w-64 h-64 md:w-80 md:h-80 mx-auto rounded-2xl shadow-xl border-4 border-white" 
-/>                        <p className="text-slate-800 font-black text-xl mt-6">Sachin Chobe</p>
-                        <p className="text-slate-500 font-bold text-sm uppercase mt-1">Scan to pay with any UPI app</p>
-                    </div>
-                    <div className="mt-10 bg-blue-50 p-6 rounded-2xl border border-blue-100 max-w-2xl mx-auto">
-                        <p className="text-[#1e3a8a] font-bold text-md">
-                            <span className="text-red-600">टीप:</span> पेमेंट केल्यानंतर स्क्रीनशॉट WhatsApp नंबरवर (7219374836) पाठवावा.
-                        </p>
-                    </div>
-                </section>
-
-
-                {/* ADMIN CLIENT MANAGEMENT */}
-                {/* ADMIN CLIENT MANAGEMENT - WHITE THEME */}
-{isAdmin && (
-    <section className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-2xl border border-slate-100">
-        <div className="flex items-center gap-3 mb-10">
-            <div className="bg-blue-600 p-2 rounded-lg shadow-md">
-                <ShieldCheck className="text-white" size={24} />
-            </div>
-            <h3 className="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-2">
-                <span className="text-blue-600">Client</span> Portfolio Status
-            </h3>
-        </div>
-
-        {/* Add Client Form - Dashed Border Style */}
-        <div className="border-2 border-dashed border-slate-200 rounded-[2rem] p-8 mb-12 bg-slate-50/30">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                <input 
-                    type="date" 
-                    value={form.date} 
-                    onChange={e => setForm({...form, date: e.target.value})} 
-                    className="p-4 rounded-2xl bg-white border border-slate-200 text-slate-700 outline-none focus:ring-2 ring-blue-500 shadow-sm transition-all" 
-                />
-                <input 
-                    type="text" 
-                    placeholder="Name" 
-                    value={form.name} 
-                    onChange={e => setForm({...form, name: e.target.value})} 
-                    className="p-4 rounded-2xl bg-white border border-slate-200 text-slate-700 outline-none focus:ring-2 ring-blue-500 shadow-sm transition-all" 
-                />
-                <input 
-                    type="text" 
-                    placeholder="Mobile No." 
-                    value={form.phone} 
-                    onChange={e => setForm({...form, phone: e.target.value})} 
-                    className="p-4 rounded-2xl bg-white border border-slate-200 text-slate-700 outline-none focus:ring-2 ring-blue-500 shadow-sm transition-all" 
-                />
-                <input 
-                    type="number" 
-                    placeholder="Investment (₹)" 
-                    value={form.amount || ''} 
-                    onChange={e => setForm({...form, amount: Number(e.target.value)})} 
-                    className="p-4 rounded-2xl bg-blue-50/50 border border-blue-100 text-blue-900 font-bold outline-none focus:ring-2 ring-blue-500 shadow-sm transition-all" 
-                />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <input 
-                    type="number" 
-                    placeholder="Rate of Interest (%)" 
-                    value={form.roi || ''} 
-                    onChange={e => setForm({...form, roi: Number(e.target.value)})} 
-                    className="p-4 rounded-2xl bg-blue-50/50 border border-blue-100 text-blue-700 font-bold outline-none focus:ring-2 ring-blue-500 shadow-sm transition-all" 
-                />
-                <input 
-                    type="text" 
-                    readOnly 
-                    placeholder="Auto Profit" 
-                    value={form.amount && form.roi ? `₹${((form.amount * form.roi) / 100).toLocaleString()}` : ''}
-                    className="p-4 rounded-2xl bg-blue-50/50 border border-blue-100 text-blue-700 font-bold outline-none shadow-sm" 
-                />
-                <button 
-                    onClick={handleAddClient} 
-                    className="bg-[#1e3a8a] hover:bg-blue-800 text-white font-black rounded-2xl py-4 transition-all shadow-lg shadow-blue-200 uppercase tracking-widest"
+                {/* Login Modal */}
+                <Modal
+                  isOpen={loginStep !== null}
+                  onClose={() => setLoginStep(null)}
+                  title={loginStep === 'email' ? '🔐 Admin Login' : '🔐 Enter Password'}
                 >
-                    Add Client
-                </button>
-            </div>
-        </div>
+                  {loginStep === 'email' ? (
+                    <div className="space-y-4">
+                      <input
+                        type="email"
+                        value={loginEmail}
+                        onChange={(e) => setLoginEmail(e.target.value)}
+                        placeholder="Admin Email"
+                        className="w-full p-4 rounded-2xl border border-slate-200 focus:ring-4 ring-blue-500/20 outline-none bg-white shadow-lg text-lg"
+                      />
+                      <button onClick={handleEmailSubmit} className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transition-all">
+                        Next →
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <input
+                        type="password"
+                        id="admin-password"
+                        placeholder="Enter Password..."
+                        className="w-full p-4 rounded-2xl border border-slate-200 focus:ring-4 ring-blue-500/20 outline-none bg-white shadow-lg text-lg"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            const target = e.target as HTMLInputElement;
+                            handlePasswordSubmit(target.value);
+                          }
+                        }}
+                      />
+                      <button 
+                        onClick={() => {
+                          const passInput = document.getElementById('admin-password') as HTMLInputElement;
+                          handlePasswordSubmit(passInput.value);
+                        }}
+                        className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transition-all"
+                      >
+                        Login → 
+                      </button>
+                    </div>
+                  )}
+                </Modal>
 
-        {/* Clients Table - Modern White Style */}
-        <div className="overflow-hidden rounded-[2rem] border border-slate-100 shadow-xl bg-white">
-            <table className="w-full text-left border-collapse">
-                <thead className="bg-[#0f172a] text-[10px] font-black uppercase tracking-widest text-slate-300">
-                    <tr>
-                        <th className="p-6">Sr.No</th>
-                        <th className="p-6">Date</th>
-                        <th className="p-6">Client Name</th>
-                        <th className="p-6">Contact No.</th>
-                        <th className="p-6">Investment</th>
-                        <th className="p-6">Yearly Interest</th>
-                        <th className="p-6 text-green-400">Profit</th>
-                        <th className="p-6 text-center">Action</th>
-                    </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-50 text-slate-600 font-medium">
-                    {clients.map((c, i) => (
-                        <tr key={c._id} className="hover:bg-blue-50/30 transition-colors">
-                            <td className="p-6 text-slate-400">{i + 1}</td>
-                            <td className="p-6">{c.date || "2026-01-19"}</td>
-                            <td className="p-6 font-bold text-slate-800">{c.name}</td>
-                            <td className="p-6 text-blue-600 underline italic decoration-blue-200">
-                                <a href={`tel:${c.phone}`}>{c.phone}</a>
-                            </td>
-                            <td className="p-6 font-bold">₹{c.amount.toLocaleString()}</td>
-                            <td className="p-6 text-orange-600 font-bold">{c.roi}%</td>
-                            <td className="p-6 text-green-600 font-black">₹{c.profit.toLocaleString()}</td>
-                            <td className="p-6">
-                                <div className="flex justify-center gap-4">
-
-                                    <button 
-                                      onClick={() => window.open(`https://wa.me/91${c.phone}`)} 
-                                      className="text-green-500 hover:scale-125 transition-transform" 
-                                      aria-label="WhatsApp"
-                                      title="WhatsApp"
-                                    >
-                                        <MessageCircle size={18} fill="currentColor" />
-                                    </button>
-                                    {editingId === c._id ? (
-                                      <>
-                                        <input 
-                                          type="date" 
-                                          value={editForm?.date || ''} 
-                                          onChange={(e) => setEditForm({...editForm, date: e.target.value})}
-                                          className="w-20 p-1 rounded text-xs border border-blue-300 bg-blue-50"
-                                        />
-                                        <input 
-                                          type="text" 
-                                          value={editForm?.name || ''} 
-                                          onChange={(e) => setEditForm({...editForm, name: e.target.value})}
-                                          className="w-20 p-1 rounded text-xs border border-blue-300 bg-blue-50"
-                                        />
-                                        <input 
-                                          type="text" 
-                                          value={editForm?.phone || ''} 
-                                          onChange={(e) => setEditForm({...editForm, phone: e.target.value})}
-                                          className="w-20 p-1 rounded text-xs border border-blue-300 bg-blue-50"
-                                        />
-                                        <input 
-                                          type="number" 
-                                          value={editForm?.amount || ''} 
-                                          onChange={(e) => setEditForm({...editForm, amount: Number(e.target.value)})}
-                                          className="w-20 p-1 rounded text-xs border border-blue-300 bg-blue-50"
-                                        />
-                                        <input 
-                                          type="number" 
-                                          value={editForm?.roi || ''} 
-                                          onChange={(e) => setEditForm({...editForm, roi: Number(e.target.value)})}
-                                          className="w-16 p-1 rounded text-xs border border-blue-300 bg-blue-50"
-                                        />
-                                        <span className="text-green-600 text-xs font-bold">₹{editForm?.profit?.toLocaleString()}</span>
-                                        <div className="gap-1 flex">
-                                          <button onClick={handleUpdate} className="bg-green-500 hover:bg-green-600 text-white p-1 rounded text-sm shadow hover:shadow-md transition-all" aria-label="Save" title="Save">
-                                            SAVE
-                                          </button>
-                                          <button onClick={() => {setEditingId(null); setEditForm(null);}} className="bg-gray-500 hover:bg-gray-600 text-white p-1 rounded text-sm shadow hover:shadow-md transition-all" aria-label="Cancel" title="Cancel">
-                                            CANCEL
-                                          </button>
-                                        </div>
-                                      </>
-                                    ) : (
-                                      <>
-                                        <td className="p-6 font-bold">₹{c.amount.toLocaleString()}</td>
-                                        <td className="p-6 text-orange-600 font-bold">{c.roi}%</td>
-                                        <td className="p-6 text-green-600 font-black">₹{c.profit.toLocaleString()}</td>
-                                        <button 
-                                          onClick={() => startEdit(c)} 
-                                          className="text-blue-400 hover:scale-125 transition-transform"
-                                          aria-label="Edit"
-                                          title="Edit"
-                                        >
-                                            <Edit3 size={18} />
-                                        </button>
-                                      </>
-                                    )}
-                                    <button 
-                                      onClick={() => requestDelete(c._id)} 
-                                      className="text-red-400 hover:scale-125 transition-transform"
-                                      aria-label="Delete"
-                                      title="Delete"
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
-
-                                </div>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    </section>
-)}
+                {/* Delete Confirmation Modal */}
+                <Modal
+                  isOpen={showConfirmDelete !== null}
+                  onClose={() => setShowConfirmDelete(null)}
+                  title="🗑️ Confirm Delete"
+                  showCancel
+                  confirmText="Delete Client"
+                  onConfirm={confirmDelete}
+                >
+                  <p className="text-lg text-slate-700 font-medium">
+                    हे क्लायंट आणि सर्व डेटा कायमचा डिलीट होईल. खरंच डिलीट करायचं का?
+                  </p>
+                </Modal>
             </main>
-
-            <ToastContainer toasts={toasts} onRemove={removeToast} />
-            
-            {/* Login Modal */}
-            <Modal
-              isOpen={loginStep !== null}
-              onClose={() => setLoginStep(null)}
-              title={loginStep === 'email' ? 'Admin Login - Email' : 'Admin Login - Password'}
-            >
-              {loginStep === 'email' ? (
-                <div className="space-y-4">
-                  <input
-                    type="email"
-                    value={loginEmail}
-                    onChange={(e) => setLoginEmail(e.target.value)}
-                    placeholder="Admin Email"
-                    className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 ring-blue-500 outline-none"
-                  />
-                  <button onClick={handleEmailSubmit} className="w-full bg-[#1e3a8a] text-white p-3 rounded-xl font-bold">
-                    Next
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-4">
-  <input
-                    type="password"
-                    id="admin-password"
-                    placeholder="Password"
-                    className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 ring-blue-500 outline-none"
-                    onKeyDown={(e) => {
-                      const target = e.target as HTMLInputElement;
-                      if (e.key === 'Enter') handlePasswordSubmit(target.value);
-                    }}
-                  />
-  <button 
-                    onClick={() => {
-                      const passInput = document.getElementById('admin-password') as HTMLInputElement;
-                      handlePasswordSubmit(passInput.value);
-                    }}
-                    className="w-full bg-[#1e3a8a] text-white p-3 rounded-xl font-bold"
-                  >
-                    Login
-                  </button>
-                </div>
-              )}
-            </Modal>
-
-            {/* Confirm Delete Modal */}
-            <Modal
-              isOpen={showConfirmDelete !== null}
-              onClose={() => setShowConfirmDelete(null)}
-              title="Confirm Delete"
-              showCancel
-              confirmText="Delete"
-              onConfirm={confirmDelete}
-            >
-              <p className="text-lg">तुम्हाला खात्री आहे की तुम्हाला हा डेटा डिलीट करायचा आहे?</p>
-            </Modal>
 
             <Footer />
         </div>

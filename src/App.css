@@ -1,21 +1,48 @@
-/* Custom animations for Toast/Modal */
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(100%);
+/* Mobile-optimized scrollbar for table */
+.overflow-x-auto::-webkit-scrollbar {
+  height: 6px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 3px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Ensure table header sticks on scroll for better mobile view */
+.table-sticky thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #0f172a;
+}
+
+/* Mobile card-like table cells for better readability */
+@media (max-width: 640px) {
+  .table-cell-bold {
+    font-weight: 800;
+    font-size: 1rem;
   }
-  to {
-    opacity: 1;
-    transform: translateX(0);
+  
+  .profit-highlight {
+    font-size: 1.1rem !important;
   }
 }
 
-.animate-slideInRight {
-  animation: slideInRight 0.3s ease-out;
-}
-
-/* Ensure smooth backdrop transitions */
-.backdrop-blur-sm {
-  transition: backdrop-filter 0.2s ease;
+/* Touch-friendly buttons on mobile */
+@media (max-width: 640px) {
+  .action-btn {
+    min-width: 40px;
+    min-height: 40px;
+    padding: 8px;
+  }
 }
 
